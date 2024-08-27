@@ -1,6 +1,6 @@
 import React from 'react';
 import loginImage from '../../assets/login.jpg';
-import backgroundImage from '../../assets/login1.jpg';
+import backgroundImage from '../../assets/bg1.jpg';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
