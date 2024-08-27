@@ -1,13 +1,25 @@
 import React from 'react';
-import loginImage from '../../assets/login.jpg'
+import loginImage from '../../assets/login.jpg';
+import backgroundImage from '../../assets/login1.jpg';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   return (
-    <div className="flex min-h-screen bg-black items-center justify-center">
-      <div className="flex flex-col md:flex-row max-w-6xl w-full bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+    <div
+      className="flex min-h-screen bg-black items-center justify-center relative"
+    >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: `url(${backgroundImage})`, 
+          opacity: 0.2 // Adjust the opacity here
+        }}
+      ></div>
+
+      <div className="relative z-10 flex flex-col md:flex-row max-w-6xl w-full bg-gray-900 bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
         {/* Background Image for Small Devices */}
-        <div className="hidden md:block md:w-1/2 bg-blue-500">
+        <div className="hidden md:block md:w-1/2">
           <img
             src={loginImage}
             alt="Login Illustration"

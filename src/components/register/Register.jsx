@@ -1,22 +1,52 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import loginImage from '../../assets/login.jpg';
+import backgroundImage from '../../assets/login1.jpg';
 
 const RegisterPage = () => {
+  const fileInputRef = useRef(null);
+
+  const handleFileInputClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const fileName = event.target.files[0]?.name || "Upload your logo";
+    document.getElementById("logo-placeholder").innerText = fileName;
+  };
+
   return (
-    <div className="flex min-h-screen bg-black items-center justify-center">
-      <div className="flex flex-row max-w-6xl w-full bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-        {/* Left Section: Image */}
-        <div className="w-1/2 bg-blue-500 flex items-center justify-center">
+    <div
+      className="flex min-h-screen bg-black items-center justify-center relative"
+    >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          opacity: 0.2, // Adjust the opacity here
+        }}
+      ></div>
+
+      <div className="relative z-10 flex flex-col md:flex-row max-w-6xl w-full bg-gray-900 bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
+        {/* Background Image for Small Devices */}
+        <div className="hidden md:block md:w-1/2">
           <img
-            src="https://via.placeholder.com/500"
+            src={loginImage}
             alt="Auth Illustration"
             className="object-cover w-full h-full"
           />
         </div>
 
         {/* Right Section: Registration Form */}
-        <div className="w-1/2 flex items-center justify-center bg-white p-8">
-          <div className="max-w-md w-full">
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-8 relative">
+          {/* Background Image for Small Devices */}
+          <img
+            src={loginImage}
+            alt="Auth Illustration"
+            className="absolute top-0 left-0 w-full h-full object-cover opacity-30 md:hidden"
+          />
+          <div className="relative max-w-md w-full">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Register</h2>
             <form>
               {/* Name Input */}
@@ -59,7 +89,7 @@ const RegisterPage = () => {
               </div>
 
               {/* Confirm Password Input */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
                   Confirm Password
                 </label>
@@ -68,6 +98,27 @@ const RegisterPage = () => {
                   id="confirm-password"
                   placeholder="Confirm your password"
                   className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Logo Upload Input */}
+              <div className="mb-6">
+                <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
+                  Logo
+                </label>
+                <div
+                  id="logo-placeholder"
+                  className="w-full p-3 border border-gray-300 rounded-md shadow-sm text-gray-500 bg-white cursor-pointer"
+                  onClick={handleFileInputClick}
+                >
+                  Upload your logo
+                </div>
+                <input
+                  type="file"
+                  id="logo"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileChange}
                 />
               </div>
 
@@ -92,7 +143,7 @@ const RegisterPage = () => {
         </div>
       </div>
     </div>
-  );  
+  );
 };
 
 export default RegisterPage;
