@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa"; // Icons for menu and logout
 
 const Dashboard = () => {
+  const [isOpen, setIsOpen] = useState(false); // State for mobile menu toggle
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -11,31 +13,47 @@ const Dashboard = () => {
     navigate('/login'); // Assuming '/login' is the route for login
   };
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen); // Toggle hamburger menu
+  };
+
   return (
-    <div className="w-full h-screen bg-gray-500 flex">
+    <div className="w-full h-screen bg-gray-500 flex flex-col lg:flex-row">
       {/* Side Navigation Bar */}
-      <div className="w-1/5 bg-red-500 p-4 flex flex-col bg-gray-600">
-        {/* Profile Info */}
-        <div className="flex items-center mb-4">
-          <img
-            className="w-16 h-16 rounded-full mr-4"
-            src={localStorage.getItem('photoURL')}
-            alt="profile"
+      <div className="lg:w-1/5 bg-gray-600 p-4 flex flex-col lg:flex-row items-center lg:items-start">
+        {/* Mobile Header */}
+        <div className="w-full flex justify-between items-center lg:hidden mb-4">
+          {/* Profile Info */}
+          <div className="flex items-center">
+            <img
+              className="w-12 h-12 rounded-full mr-2"
+              src={localStorage.getItem('photoURL')}
+              alt="profile"
+            />
+            <p className="text-white text-lg">
+              {localStorage.getItem('cName')}
+            </p>
+          </div>
+          {/* Logout Icon */}
+          <FaSignOutAlt
+            onClick={handleLogout}
+            className="text-white text-2xl cursor-pointer"
           />
-          <p className="text-white text-lg">
-            {localStorage.getItem('cName')}
-          </p>
         </div>
-        {/* Logout Button */}
-        <button
-          className="bg-gray-800 text-white py-2 px-4 rounded mb-6"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-        <hr className="w-full mb-4" />
+
+        {/* Hamburger Menu for Mobile */}
+        <div className="lg:hidden w-full flex justify-end mb-4">
+          <button onClick={toggleMenu}>
+            {isOpen ? (
+              <FaTimes className="text-white text-2xl" />
+            ) : (
+              <FaBars className="text-white text-2xl" />
+            )}
+          </button>
+        </div>
+
         {/* Navigation Links */}
-        <div className="flex flex-col w-full">
+        <div className={`flex flex-col w-full lg:block ${isOpen ? 'block' : 'hidden'}`}>
           <Link
             to="/"
             className="text-white py-2 px-3 rounded mb-2 hover:bg-gray-900 hover:text-gray-200 no-underline"
@@ -62,8 +80,9 @@ const Dashboard = () => {
           </Link>
         </div>
       </div>
+
       {/* Main Content */}
-      <div className="w-4/5 bg-slate-400 p-4">
+      <div className="w-full lg:w-4/5 bg-slate-400 p-4">
         <p>Main content goes here</p>
       </div>
     </div>
