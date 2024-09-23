@@ -1,9 +1,32 @@
 import React from 'react';
+import { useState } from 'react';
 import loginImage from '../../assets/login.jpg';
 import backgroundImage from '../../assets/bg1.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import {auth} from '../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user);
+      localStorage.setItem('cName', user.displayName);
+      localStorage.setItem('photoURL', user.photoURL);
+      navigate('/dashboard');
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+    // console.log(email, password);
+  }
   return (
     <div
       className="flex min-h-screen bg-black items-center justify-center relative"
@@ -37,7 +60,7 @@ const LoginPage = () => {
           />
           <div className="relative max-w-md w-full">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Login</h2>
-            <form>
+            <form onSubmit={submitHandler}>
               {/* Name Input */}
               <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -57,6 +80,7 @@ const LoginPage = () => {
                   Email
                 </label>
                 <input
+                  onChange={(e) => {setEmail(e.target.value)}}
                   type="email"
                   id="email"
                   placeholder="Enter your email"
@@ -70,6 +94,7 @@ const LoginPage = () => {
                   Password
                 </label>
                 <input
+                  onChange={(e) => {setPassword(e.target.value)}}
                   type="password"
                   id="password"
                   placeholder="Enter your password"
