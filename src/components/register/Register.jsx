@@ -62,9 +62,9 @@ const RegisterPage = () => {
           email : email,
           photoURL: downloadURL,
         })
+        navigate('/dashboard');
         localStorage.setItem('cName', newUser.user.displayName);
         localStorage.setItem('photoURL', newUser.user.photoURL);
-        navigate('/dashboard');
         // You can now store the download URL in your database or display it
       } else {
         console.log('No file selected');
