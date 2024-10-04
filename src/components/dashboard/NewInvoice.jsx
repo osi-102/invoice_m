@@ -57,6 +57,8 @@ const NewInvoice = () => {
       address,
       items,
       total,
+      uid: localStorage.getItem('uid'),
+      createdAt: new Date().toISOString(),
     };
 
     try {
@@ -84,6 +86,8 @@ const NewInvoice = () => {
     doc.text(`Email: ${email}`, 20, 80);
     doc.text(`Address: ${address}`, 20, 90);
 
+    saveInvoiceToFirebase();
+
     const itemRows = items.map(item => [
       item.itemName,
       item.itemDescription,
@@ -91,7 +95,8 @@ const NewInvoice = () => {
       item.price,
       item.discount + (item.discountType === 'percent' ? '%' : ''),
       item.totalItemPrice
-    ]);
+    ]
+  );
 
     doc.autoTable({
       head: [['Item', 'Description', 'Quantity', 'Price', 'Discount', 'Total']],

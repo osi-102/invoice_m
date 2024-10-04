@@ -7,6 +7,7 @@ import Home from "./components/dashboard/Home";
 import Dashboard from "./components/dashboard/Dashboard";
 import Invoices from "./components/dashboard/Invoices";
 import NewInvoice from "./components/dashboard/NewInvoice";
+import InvoiceDetail from "./components/dashboard/InvoiceDetail";
 
 function App() {
   const myRouter = createBrowserRouter([
@@ -24,6 +25,7 @@ function App() {
         { path: "invoices", element: <Invoices /> },
         { path: "new-invoice", element: <NewInvoice /> },
         { path: "setting", element: <Setting /> },
+        { path: "invoice-detail", element: <InvoiceDetail /> },
       ],
     },
   ]);

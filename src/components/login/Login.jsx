@@ -20,6 +20,8 @@ const LoginPage = () => {
       console.log(user);
       localStorage.setItem('cName', user.displayName);
       localStorage.setItem('photoURL', user.photoURL);
+      localStorage.setItem('email', user.email);
+      localStorage.setItem('uid', user.uid);
       navigate('/dashboard');
     })
     .catch((error) => {

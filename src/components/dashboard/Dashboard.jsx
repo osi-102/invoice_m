@@ -1,10 +1,24 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
+import {auth} from '../../firebase';
+import {signOut} from 'firebase/auth';
 
 // import Home from './Home';
 // import Invoices from './Invoices';
 // import NewInvoice from './NewInvoice';
 // import Setting from './Setting';
 const Dashboard = () => {
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    signOut(auth).then(() => {
+      localStorage.clear();
+      navigate('/login');
+    }).catch((error) => {
+      console.log(error.message);
+    });
+  }
+
   return (
     //  full div
     <div className="min-h-screen w-full flex">
@@ -20,7 +34,9 @@ const Dashboard = () => {
           <p className="">
             {localStorage.getItem('cName')}
           </p>
-          <button className='bg-cyan-600 text-white'>Logout</button>
+          <button 
+          onClick={logout}
+          className='bg-cyan-600 text-white'>Logout</button>
           </div>
         </div>
         <hr />
@@ -37,7 +53,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-4/5 bg-zinc-500">
-        <h1>Main Content</h1>
+        {/* <h1>Main Content</h1> */}
         <Outlet />
       </div>
     </div>

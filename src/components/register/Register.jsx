@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import loginImage from '../../assets/login.jpg';
 import backgroundImage from '../../assets/bg1.jpg';
-import { auth, storage, db} from '../../firebase';
+import { auth, storage, db } from '../../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { setDoc, doc } from "firebase/firestore";
@@ -14,17 +14,22 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [file, setFile] = useState(null);
   const [displayName, setDisplayName] = useState("");
+  const [imageUrl, setImageUrl] = useState(null);
 
   const navigate = useNavigate();
 
+  // Function to handle file selection and preview
   const handleFileInputClick = () => {
     fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
-    const fileName = event.target.files[0]?.name || "Upload your logo";
-    document.getElementById("logo-placeholder").innerText = fileName;
-    setFile(event.target.files[0]); // Set the selected file
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setImageUrl(URL.createObjectURL(selectedFile)); // Show preview
+      document.getElementById("logo-placeholder").innerText = selectedFile.name; // Display file name
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -41,36 +46,42 @@ const RegisterPage = () => {
       console.log('User created:', newUser);
 
       if (file) {
-        // Create a reference in Firebase Storage with a safe path
+        // Upload the file to Firebase Storage
         const date = new Date().getTime();
         const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_"); // Sanitize file name
         const storageRef = ref(storage, `${displayName}-${date}-${fileName}`);
 
-        // Upload the file to Firebase Storage
         const snapshot = await uploadBytes(storageRef, file);
         console.log('Uploaded file:', snapshot);
 
         // Get the download URL of the uploaded file
         const downloadURL = await getDownloadURL(storageRef);
         console.log('File available at:', downloadURL);
-        updateProfile(newUser.user, { displayName, photoURL: downloadURL });
 
-        setDoc(doc(db,"users",newUser.user.uid),
-        {
+        // Update user profile with the image URL
+        await updateProfile(newUser.user, { displayName, photoURL: downloadURL });
+
+        // Save user info in Firestore
+        await setDoc(doc(db, "users", newUser.user.uid), {
           uid: newUser.user.uid,
-          displayName : displayName,
-          email : email,
+          displayName: displayName,
+          email: email,
           photoURL: downloadURL,
-        })
+        });
+
+        // Store company info in local storage
+        localStorage.setItem('cName', displayName);
+        localStorage.setItem('photoURL', downloadURL);
+        localStorage.setItem('email', newUser.user.email);
+        localStorage.setItem('uid', newUser.user.uid);
+        
+        // Redirect to dashboard after successful registration
         navigate('/dashboard');
-        localStorage.setItem('cName', newUser.user.displayName);
-        localStorage.setItem('photoURL', newUser.user.photoURL);
-        // You can now store the download URL in your database or display it
       } else {
         console.log('No file selected');
       }
     } catch (err) {
-      console.log(err);
+      console.error("Error during registration:", err);
     }
   };
 
@@ -183,6 +194,17 @@ const RegisterPage = () => {
                 />
               </div>
 
+              {/* Logo Preview */}
+              {imageUrl && (
+                <div className="flex justify-center mb-4">
+                  <img
+                    src={imageUrl}
+                    alt="Logo Preview"
+                    className="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-md"
+                  />
+                </div>
+              )}
+
               <button
                 type="submit"
                 className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -194,9 +216,9 @@ const RegisterPage = () => {
             {/* Toggle Link */}
             <div className="mt-6 text-center">
               <p className="text-gray-600">
-                Already have an account?{' '}
-                <Link to="/login" className="text-blue-500 hover:underline focus:outline-none">
-                  Login
+                Already have an account?{" "}
+                <Link to="/login" className="text-blue-500 hover:underline">
+                  Log In
                 </Link>
               </p>
             </div>
