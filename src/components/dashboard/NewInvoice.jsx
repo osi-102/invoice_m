@@ -36,7 +36,7 @@ const NewInvoice = () => {
 
   const calculateTotal = (items) => {
     const sum = items.reduce((acc, item) => acc + parseFloat(item.totalItemPrice || 0), 0).toFixed(2);
-    setTotal(sum);
+    setTotal(parseFloat(sum)); // Convert the total to a number
   };
 
   const addItem = () => {
@@ -50,6 +50,17 @@ const NewInvoice = () => {
   };
 
   const saveInvoiceToFirebase = async () => {
+    const createdAt = new Date();
+    const formattedDate = createdAt.toLocaleString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit',
+      timeZoneName: 'short' 
+    });
+
     const invoiceData = {
       clientName,
       contact,
@@ -58,7 +69,7 @@ const NewInvoice = () => {
       items,
       total,
       uid: localStorage.getItem('uid'),
-      createdAt: new Date().toISOString(),
+      createdAt: formattedDate,  // Save the formatted date
     };
 
     try {
@@ -95,8 +106,7 @@ const NewInvoice = () => {
       item.price,
       item.discount + (item.discountType === 'percent' ? '%' : ''),
       item.totalItemPrice
-    ]
-  );
+    ]);
 
     doc.autoTable({
       head: [['Item', 'Description', 'Quantity', 'Price', 'Discount', 'Total']],
@@ -213,7 +223,7 @@ const NewInvoice = () => {
             <div>
               <label>Total</label>
               <input
-                type="text"
+                type="number"
                 value={item.totalItemPrice}
                 readOnly
                 className="form-input mt-1 bg-gray-200"
@@ -240,7 +250,7 @@ const NewInvoice = () => {
         <div>
           <label>Total Amount</label>
           <input
-            type="text"
+            type="number"
             value={total}
             readOnly
             className="form-input mt-1 bg-gray-200"
